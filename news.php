@@ -1,5 +1,24 @@
 
 
+<?php
+
+//This function is used to read all files in a directory
+function files($path,&$files = array()) {
+    $dir = opendir($path."/.");
+    while($item = readdir($dir))
+        if(is_file($sub = $path."/".$item))
+            $files[] = $item;else
+            if($item != "." and $item != "..")
+                files($sub,$files); 
+    return($files);
+}
+//-----
+
+
+$dirName = "./news_text";
+$arrayNewFiles = files($dirName);
+
+?>
 <!DOCTYPE html>
 <head><title> CiS International</title>
 	<meta name="author" content="Wink Hosting (www.winkhosting.com)" />
@@ -55,11 +74,10 @@ We provide high value wireless and broadband consultancy services, and nationall
 			</div>
 			<div id="leftpanel">
 				<div align="justify" class="graypanel">
-					<span class="smalltitle"> Weekly Task</span><br /><br />
+					<span class="smalltitle"> Goals for week</span><br /><br />
 					<span class="smallredtext">August 3, 2014</span><br />
 					<span class="bodytext">We provide high value wireless and broadband consultancy services,.</span><br />
 					<a href="#" class="smallgraytext">More...</a><br /><br />
-				
 					
 				</div>
 				
@@ -72,9 +90,36 @@ We provide high value wireless and broadband consultancy services, and nationall
 				
 				<div id="leftpanel">
 			<div id="leftpanel">
-			<div align="justify" class="graypanel">
-					<span class="smalltitle"><a href="news.php"> News</a></span><br /><br />
+				<div align="justify" class="graypanel">
+				<span class="smalltitle"><a href="news.php"> News</a></span><br /><br />
 				
+					<div class="newsContainer">
+					
+	<marquee onMouseOver="this.scrollAmount=0" onMouseOut="this.scrollAmount=2" scrollamount="2" direction="up" loop="true">
+		
+		<?php foreach ($arrayNewFiles as $fileName) { ?>
+			<b><?= substr_replace($fileName,    "", -4) ?></b>
+			<br />
+			<?php 
+				$line = 3; //This the line display limit per news on the new box
+				
+				$file = fopen($dirName."/".$fileName ,"r");
+				while(! feof($file)) {
+				  $line--;
+				  if($line != 0) {
+					echo fgets($file). "<br />";
+				  }
+				  else {
+					echo fgets($file). " <a href='news_full.php?newsFilename=".urlencode($fileName)."' />read more...</a> <br />";
+					break;
+				  }
+				}
+				fclose($file);
+			?>
+			<br />
+		<?php } ?>
+	</marquee>
+					
 					
 				</div>
 			</div>
